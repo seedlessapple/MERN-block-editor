@@ -8,6 +8,12 @@
   ],
   "scripts": {
     "client": "yarn workspace client start",
-    "server": "yarn workspace server start"
+    "server": "yarn workspace server dev"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.14.194",
+    "dotenv": "^16.0.3",
+    "lodash": "^4.17.21",
+    "typescript": "^5.0.4"
   }
 }
