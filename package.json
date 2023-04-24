@@ -15,5 +15,9 @@
     "dotenv": "^16.0.3",
     "lodash": "^4.17.21",
     "typescript": "^5.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.13",
+    "ts-node": "^10.9.1"
   }
 }
