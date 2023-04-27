@@ -125,6 +125,7 @@ interface IEditorStateSetFunctions {
 
   setSettings: (by: Partial<TSettings>) => void;
   setData: (by: TContainer[]) => void;
+  setTitle: (by: string) => void;
 
   setCurrent: (by: Partial<IEditorData["current"]>) => void;
   setCurrentBlock: (by: TPageDataTypes) => void;
@@ -174,6 +175,11 @@ export const useEditorState = create<IEditorData & IEditorStateSetFunctions>()(
           ...state.settings,
           ...by,
         },
+      })),
+    setTitle: (by) =>
+      set((state) => ({
+        ...state,
+        title: by,
       })),
     setData: (by) =>
       set((state) => ({
