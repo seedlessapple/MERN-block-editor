@@ -5,7 +5,14 @@ import { useEditorState } from "editor/state/useEditorState";
 import { TPageDataTypes } from "editor/types/editor.type";
 import { TIcons } from "editor/assets/icons.data";
 import _, { divide } from "lodash";
-import { editorBlocks } from "editor/data/blocks.data";
+import {
+  createBlockByType,
+  editorBlocks,
+  findBlockDataByType,
+} from "editor/data/blocks.data";
+import { useAlert } from "editor/hooks/useAlert";
+import { PUBLIC_generateRandomId } from "editor/functions/functions";
+import { useError } from "editor/hooks/useError";
 type Props = {};
 const LayerItem = ({
   data,
@@ -22,11 +29,19 @@ const LayerItem = ({
   icon?: TIcons;
   children?: JSX.Element | JSX.Element[] | undefined;
 }) => {
+  const { raiseError } = useError();
   const [open, setOpen] = useState<Boolean>(true);
   const [show, setShow] = useState<Boolean>(true);
   const [locked, setLocked] = useState<Boolean>(false);
   const [isAddRowDragover, setIsAddRowDragover] = useState<boolean>(false);
-  const { current, setCurrent, setCurrentBlock, drag } = useEditorState();
+  const {
+    current,
+    setCurrent,
+    setCurrentBlock,
+    drag,
+    addBlockAfter,
+    addBlockInside,
+  } = useEditorState();
   const [layerState, setLayerState] = useState({
     isHovering: false,
   });
@@ -51,7 +66,7 @@ const LayerItem = ({
       <div
         className={`${style.layer_item} ${
           drag.isDragging && layerState.isHovering ? style.dragover : ""
-        }${isAddRowDragover ? style.add_row_draggover : ""}`}
+        }${drag.isDragging && isAddRowDragover ? style.add_row_draggover : ""}`}
       >
         <div
           className={`${style.header} ${
@@ -66,6 +81,12 @@ const LayerItem = ({
           onMouseLeave={() =>
             setLayerState((prev) => ({ ...prev, isHovering: false }))
           }
+          onMouseUp={() => {
+            if (drag.isDragging && drag.blockType) {
+              //  drop
+              addBlockAfter(data.id, createBlockByType(drag.blockType));
+            }
+          }}
           onClick={() => {
             setCurrent({
               selected: [{ id: data.id, type: data.type, path: path }],
@@ -126,10 +147,31 @@ const LayerItem = ({
         </div>
         {canOpen && open && (
           <div
-            onMouseEnter={() => setIsAddRowDragover(true)}
+            onMouseEnter={() => drag.isDragging && setIsAddRowDragover(true)}
             onMouseLeave={() => setIsAddRowDragover(false)}
-            className={`${drag.isDragging ? style.add_row : ""} ${
-              isAddRowDragover ? style.dragover : ""
+            onMouseUp={() => {
+              if (drag.isDragging && isAddRowDragover && drag.blockType) {
+                //  drop
+                if (
+                  findBlockDataByType(data.type)?.validDropType?.includes(
+                    drag.blockType
+                  )
+                ) {
+                  console.log(drag.blockType);
+
+                  addBlockInside(data.id, createBlockByType(drag.blockType));
+                } else {
+                  raiseError({
+                    title: `${
+                      findBlockDataByType(drag.blockType)?.label
+                    }는 컨테이너에 바로 추가할 수 없습니다`,
+                    content: "",
+                  });
+                }
+              }
+            }}
+            className={`${style.add_row} ${
+              drag.isDragging && isAddRowDragover ? style.dragover : ""
             }`}
           ></div>
         )}
@@ -145,7 +187,7 @@ const mapLayers = (
 ): JSX.Element[] => {
   const depths = pathArray.length;
 
-  return data.map((item) => {
+  return data?.map((item) => {
     switch (item.type) {
       case "container":
         return (
@@ -224,8 +266,47 @@ const mapLayers = (
 };
 
 const Layers = (props: Props) => {
-  const { data } = useEditorState();
-  return <div className={style.layer_container}>{mapLayers(data, [])}</div>;
+  const { data, drag, setData } = useEditorState();
+  const { raiseError } = useError();
+  const [isAddToPageDragover, setIsAddToPageDragover] =
+    useState<boolean>(false);
+
+  return (
+    <div className={style.layer_container}>
+      <div
+        onMouseEnter={() => drag.isDragging && setIsAddToPageDragover(true)}
+        onMouseLeave={() => setIsAddToPageDragover(false)}
+        className={`${style.add_to_page} ${
+          drag.isDragging && isAddToPageDragover ? style.dragover : ""
+        }`}
+        onMouseUp={() => {
+          if (drag.isDragging && drag.blockType) {
+            if (
+              findBlockDataByType("container")?.validDropType?.includes(
+                drag.blockType
+              )
+            ) {
+              useEditorState.setState((prev) => ({
+                data: [
+                  createBlockByType(drag.blockType ?? "block-text"),
+                  ...prev.data,
+                ],
+              }));
+            } else {
+              raiseError({
+                title: `${
+                  findBlockDataByType(drag.blockType)?.label
+                }는 페이지에 바로 추가할 수 없습니다`,
+                content: "",
+              });
+            }
+          }
+        }}
+        style={{ height: data.length === 0 ? "100%" : "" }}
+      ></div>
+      {mapLayers(data, [])}
+    </div>
+  );
 };
 
 export default Layers;
