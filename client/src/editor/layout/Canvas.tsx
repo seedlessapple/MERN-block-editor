@@ -14,7 +14,7 @@ const mapDataToComponent = (
   data: TPageDataTypes[],
   pathArray: string[]
 ): JSX.Element[] => {
-  return data.map((item) => {
+  return data?.map((item) => {
     switch (item.type) {
       case "container":
         return (
