@@ -28,64 +28,75 @@ export function _EDITOR_modifyBlockProperties(
 export function _EDITOR_addBlockBefore(
   data: TPageDataTypes[],
   blockId: string,
-  type: TPageDataTypes["type"]
+  newBlock: TPageDataTypes
 ) {
-  let NBlock = undefined;
   let result = data;
   const loopThrough = (block: any) => {
     if (!block.hasOwnProperty("data") || !_.isArray(block.data)) return;
-    block.data.forEach((childBlock: any) => {
+    for (const childBlock of block.data) {
       if (!_.isArray(childBlock.data)) return;
       const index = childBlock.data.findIndex((o: any) => o.id === blockId);
 
       if (index >= 0 && index !== undefined) {
-        NBlock = {
-          id: PUBLIC_generateRandomId(12),
-          type: type,
-        };
-        childBlock.data.splice(index, 0, NBlock);
+        childBlock.data.splice(index, 0, newBlock);
         return;
       } else {
         loopThrough(childBlock);
       }
-    });
+    }
     return block;
   };
   console.log(loopThrough({ data: result })?.data);
   // console.log(result);
-  return { result, NBlock };
+  return { result, newBlock };
 }
 export function _EDITOR_addBlockAfter(
   data: TPageDataTypes[],
   blockId: string,
-  type: TPageDataTypes["type"]
+  newBlock: TPageDataTypes
 ) {
-  let NBlock = undefined;
   let result = data;
   const loopThrough = (block: any) => {
     if (!block.hasOwnProperty("data") || !_.isArray(block.data)) return;
-    block.data.forEach((childBlock: any) => {
-      if (!_.isArray(childBlock.data)) return;
-      const index = childBlock.data.findIndex((o: any) => o.id === blockId);
+    for (const childBlock of block.data) {
+      if (childBlock.id === blockId) {
+        const index = block.data.findIndex((o: any) => o.id === blockId);
+        console.log(index);
 
-      if (index >= 0 && index !== undefined) {
-        NBlock = {
-          id: PUBLIC_generateRandomId(12),
-          type: type,
-        };
-        childBlock.data.splice(index + 1, 0, NBlock);
+        block.data.splice(index + 1, 0, newBlock);
         return;
       } else {
         loopThrough(childBlock);
       }
-    });
+    }
     return block;
   };
-  console.log(loopThrough({ data: [{ data: result }] })?.data);
+  loopThrough({ data: result });
   // console.log(result);
-  return { result, NBlock };
+  return { result, newBlock };
 }
+export function _EDITOR_addBlockInside(
+  data: TPageDataTypes[],
+  blockId: string,
+  newBlock: TPageDataTypes
+) {
+  let result = data;
+  const loopThrough = (block: any) => {
+    if (!block.hasOwnProperty("data") || !_.isArray(block.data)) return;
+    for (const childBlock of block.data) {
+      console.log(childBlock);
 
+      if (!_.isArray(childBlock.data)) return;
+      if (childBlock.id === blockId) {
+        return (childBlock.data = [newBlock, ...childBlock.data]);
+      } else {
+        loopThrough(childBlock);
+      }
+    }
+  };
+  loopThrough({ data: result });
+  return { result };
+}
 export function _EDITOR_getBlockById(data: TPageDataTypes[], blockId: string) {
   return _.find(data, _.matchesProperty("id", blockId));
 }
