@@ -7,6 +7,7 @@ import {
 } from "editor/types/editor.type";
 import {
   _EDITOR_addBlockAfter,
+  _EDITOR_addBlockInside,
   _EDITOR_modifyBlockProperties,
 } from "editor/functions/editorFunctions";
 
@@ -124,7 +125,7 @@ interface IEditorStateSetFunctions {
   // set functions
 
   setSettings: (by: Partial<TSettings>) => void;
-  setData: (by: TContainer[]) => void;
+  setData: (by: TPageDataTypes[]) => void;
   setTitle: (by: string) => void;
 
   setCurrent: (by: Partial<IEditorData["current"]>) => void;
@@ -135,7 +136,8 @@ interface IEditorStateSetFunctions {
     blockId: string,
     properties: TPageDataTypes["properties"]
   ) => void;
-  addBlockAfter: (blockId: string, type: TPageDataTypes["type"]) => void;
+  addBlockAfter: (blockId: string, newBlock: TPageDataTypes) => void;
+  addBlockInside: (blockId: string, newBlock: TPageDataTypes) => void;
 }
 
 export const useEditorState = create<IEditorData & IEditorStateSetFunctions>()(
@@ -152,7 +154,7 @@ export const useEditorState = create<IEditorData & IEditorStateSetFunctions>()(
       selected: [],
       _selectionChangeEvent: {},
     },
-    data: dummyContent,
+    data: [],
     preview: { isOpen: false },
     settings: {
       isOpen: false,
@@ -228,12 +230,21 @@ export const useEditorState = create<IEditorData & IEditorStateSetFunctions>()(
           ...by,
         },
       })),
-    addBlockAfter: (blockId, type) =>
+    addBlockAfter: (blockId, newBlock) =>
       set((state) => {
-        const { result, NBlock } = _EDITOR_addBlockAfter(
+        const { result } = _EDITOR_addBlockAfter(state.data, blockId, newBlock);
+        return {
+          ...state,
+          data: result,
+          // currentBlock: CBlock,
+        };
+      }),
+    addBlockInside: (blockId, newBlock) =>
+      set((state) => {
+        const { result } = _EDITOR_addBlockInside(
           state.data,
           blockId,
-          type
+          newBlock
         );
         return {
           ...state,
