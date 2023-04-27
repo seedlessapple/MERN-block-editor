@@ -5,6 +5,6 @@ interface IEditorView {
   setView: (by: TView) => void;
 }
 export const useEditorView = create<IEditorView>()((set) => ({
-  view: "database",
+  view: "canvas",
   setView: (by) => set((state) => ({ view: by })),
 }));
