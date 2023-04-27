@@ -31,6 +31,7 @@ function useApi<T>(): [T | null, boolean, (params: ApiParams<T>) => void] {
     setIsLoading(true);
     try {
       const response: AxiosResponse<T> = await axios({
+        timeout: 10000,
         method,
         url: initialUrl + url,
         data,
