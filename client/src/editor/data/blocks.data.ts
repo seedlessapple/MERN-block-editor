@@ -1,4 +1,5 @@
 import { TIcons } from "editor/assets/icons.data";
+import { PUBLIC_generateRandomId } from "editor/functions/functions";
 import {
   TBlockInput,
   TBlockSelect,
@@ -25,8 +26,10 @@ type TEditorBlocksData = {
   label: string;
   icon: TIcons;
   type?: TPageDataTypes["type"];
-  category: typeof editorBlocksCategory[number];
+  category: (typeof editorBlocksCategory)[number];
   properties?: TBlockProperties[];
+  defaultValue?: any;
+  validDropType?: TPageDataTypes["type"][];
 }[];
 
 export const editorBlocks: TEditorBlocksData = [
@@ -36,6 +39,20 @@ export const editorBlocks: TEditorBlocksData = [
     type: "container",
     category: "컨테이너",
     properties: ["size", "stack", "align", "border", "background"],
+    validDropType: [
+      "block-input",
+      "block-select",
+      "block-table",
+      "block-text",
+      "container",
+    ],
+    defaultValue: {
+      type: "container",
+      data: [],
+      properties: {
+        stack: "vertical",
+      },
+    },
   },
   {
     label: "텍스트",
@@ -43,6 +60,10 @@ export const editorBlocks: TEditorBlocksData = [
     type: "block-text",
     category: "일반",
     properties: ["size", "text", "border", "background"],
+    defaultValue: {
+      type: "block-text",
+      data: [],
+    },
   },
   {
     label: "입력",
@@ -50,6 +71,9 @@ export const editorBlocks: TEditorBlocksData = [
     type: "block-input",
     category: "폼",
     properties: ["border", "size", "placeholder", "background"],
+    defaultValue: {
+      type: "block-input",
+    },
   },
   {
     label: "Textarea",
@@ -69,57 +93,83 @@ export const editorBlocks: TEditorBlocksData = [
     icon: "table",
     type: "block-table",
     category: "일반",
+    validDropType: ["block-table-row"],
     properties: ["size", "background"],
+    defaultValue: {
+      type: "block-table",
+      data: [],
+    },
   },
   {
-    label: "Autofill",
-    icon: "rectangle",
-    category: "폼",
-    properties: ["size", "placeholder", "background"],
+    label: "테이블 열",
+    icon: "table",
+    type: "block-table-row",
+    category: "일반",
+    validDropType: [
+      "block-input",
+      "block-select",
+      "block-table",
+      "block-text",
+      "container",
+    ],
+    properties: ["background"],
+    defaultValue: {
+      type: "block-table-row",
+      data: [],
+    },
   },
-  {
-    label: "DatePicker",
-    icon: "rectangle",
-    category: "폼",
-    properties: ["size"],
-  },
-  {
-    label: "체크박스",
-    icon: "squareChecked",
-    category: "폼",
-    properties: ["size"],
-  },
-  {
-    label: "스위치",
-    icon: "rectangle",
-    category: "폼",
-    properties: ["size"],
-  },
-  {
-    label: "Radio",
-    icon: "rectangle",
-    category: "폼",
-    properties: ["size"],
-  },
-  {
-    label: "Button",
-    icon: "rectangle",
-    category: "폼",
-    properties: ["size"],
-  },
-  {
-    label: "파일업로드",
-    icon: "file",
-    category: "데이터",
-    properties: ["size"],
-  },
-  {
-    label: "Divider",
-    icon: "rectangle",
-    category: "폼",
-    properties: ["size"],
-  },
+  // {
+  //   label: "Autofill",
+  //   icon: "rectangle",
+  //   category: "폼",
+  //   properties: ["size", "placeholder", "background"],
+  // },
+  // {
+  //   label: "DatePicker",
+  //   icon: "rectangle",
+  //   category: "폼",
+  //   properties: ["size"],
+  // },
+  // {
+  //   label: "체크박스",
+  //   icon: "squareChecked",
+  //   category: "폼",
+  //   properties: ["size"],
+  // },
+  // {
+  //   label: "스위치",
+  //   icon: "rectangle",
+  //   category: "폼",
+  //   properties: ["size"],
+  // },
+  // {
+  //   label: "Radio",
+  //   icon: "rectangle",
+  //   category: "폼",
+  //   properties: ["size"],
+  // },
+  // {
+  //   label: "Button",
+  //   icon: "rectangle",
+  //   category: "폼",
+  //   properties: ["size"],
+  // },
+  // {
+  //   label: "파일업로드",
+  //   icon: "file",
+  //   category: "데이터",
+  //   properties: ["size"],
+  // },
+  // {
+  //   label: "Divider",
+  //   icon: "rectangle",
+  //   category: "폼",
+  //   properties: ["size"],
+  // },
 ];
+export function findBlockDataByType(type: TPageDataTypes["type"]) {
+  return editorBlocks.find((o) => o.type === type);
+}
 type TEditorBlocksProperties = {
   container: (keyof TContainer["properties"])[];
   "block-text": (keyof TBlockText["properties"])[];
@@ -172,3 +222,11 @@ export const editorBlocksDefaultProperties: TEditorBlocksDefaultProperties = {
   },
   "block-select": {},
 };
+export function createBlockByType(
+  type: TPageDataTypes["type"]
+): TPageDataTypes {
+  return Object.assign(
+    { id: PUBLIC_generateRandomId(12), type, data: undefined },
+    editorBlocks.find((o) => o.type === type)?.defaultValue
+  );
+}
