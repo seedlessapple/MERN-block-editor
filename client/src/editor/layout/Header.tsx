@@ -2,9 +2,11 @@ import React from "react";
 import style from "../editor.module.scss";
 import { useEditorState } from "editor/state/useEditorState";
 import Icon from "editor/assets/Icon";
+import { useEditorView } from "editor/state/useEditorView";
 
 const Header = () => {
-  const { title, data, setSettings } = useEditorState();
+  const { title, data, setTitle, setSettings } = useEditorState();
+  const { setView, view } = useEditorView();
   return (
     <div className={style.header_container}>
       <div className={style.controls_container}>
@@ -18,16 +20,58 @@ const Header = () => {
         </div>
       </div>
       <div className={style.title_container}>
-        <div
+        <input
+          id={"titleInput"}
           className={style.title}
-          onDoubleClick={(e) => {
-            e.currentTarget.contentEditable = "true";
+          value={title}
+          onChange={(e) => {
+            e.currentTarget.style.width = `${
+              e.target.value.length * 13.82 + 16
+            }px`;
+            setTitle(e.target.value);
           }}
-        >
-          {title}
-        </div>
+        />
       </div>
       <div className={style.actions_container}>
+        <div
+          className={`${style.icon_btn} ${
+            view === "canvas" ? style.active : ""
+          }`}
+        >
+          <Icon
+            type="edit"
+            width={18}
+            height={18}
+            onClick={() => setView("canvas")}
+          />
+        </div>
+        <div
+          className={`${style.icon_btn} ${
+            view === "database" ? style.active : ""
+          }`}
+        >
+          <Icon
+            type="database"
+            width={18}
+            height={18}
+            onClick={() => setView("database")}
+          />
+        </div>
+        <div
+          className={`${style.icon_btn} ${
+            view === "preview" ? style.active : ""
+          }`}
+        >
+          <Icon
+            type="show"
+            width={18}
+            height={18}
+            onClick={() => setView("preview")}
+          />
+        </div>
+        <div className={`${style.icon_btn} ${style.active}`}>
+          <Icon type="cloud" width={18} height={18} />
+        </div>
         <div
           className={style.save_btn}
           onClick={() => {
@@ -35,21 +79,6 @@ const Header = () => {
           }}
         >
           저장
-        </div>
-        <div className={style.auto_save}>
-          <Icon type="cloud" width={18} height={18} />
-        </div>
-        <div className={style.preview}>
-          <Icon
-            type="show"
-            width={18}
-            height={18}
-            onClick={() =>
-              useEditorState.setState((prev) => ({
-                preview: { isOpen: !prev.preview.isOpen },
-              }))
-            }
-          />
         </div>
       </div>
     </div>
