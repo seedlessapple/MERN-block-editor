@@ -1,27 +1,26 @@
-import { _parseStyledTextHtml } from "editor/functions/functions";
-import { TBlockText, TStyledTextObjectArray } from "editor/types/editor.type";
-import React, { useState, useRef } from "react";
+import { TBlockText } from "editor/types/editor.type";
+import React, { useRef } from "react";
 import style from "editor/editor.module.scss";
 import { editorBlocksDefaultProperties } from "editor/data/blocks.data";
 
-interface Style {
-  key: string;
-  tag: string;
-  style: React.CSSProperties;
-}
+// interface Style {
+//   key: string;
+//   tag: string;
+//   style: React.CSSProperties;
+// }
 
-const styles: { [key: string]: Style } = {
-  bold: {
-    key: "b",
-    tag: "span",
-    style: { fontWeight: "bold" },
-  },
-  italic: {
-    key: "i",
-    tag: "span",
-    style: { fontStyle: "italic" },
-  },
-};
+// const styles: { [key: string]: Style } = {
+//   bold: {
+//     key: "b",
+//     tag: "span",
+//     style: { fontWeight: "bold" },
+//   },
+//   italic: {
+//     key: "i",
+//     tag: "span",
+//     style: { fontStyle: "italic" },
+//   },
+// };
 
 const StyledText = ({ data }: { data: TBlockText }) => {
   // const [textData] = useState<TStyledTextObjectArray>([

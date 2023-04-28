@@ -1,9 +1,22 @@
-import { useEditorState } from "editor/state/useEditorState";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
-type Props = {};
+const GlobalEventControls = () => {
+  // useEffect(() => {
+  //   window.addEventListener("beforeunload", alertUser);
+  //   window.addEventListener("unload", handleTabClosing);
+  //   return () => {
+  //     window.removeEventListener("beforeunload", alertUser);
+  //     window.removeEventListener("unload", handleTabClosing);
+  //   };
+  // });
 
-const GlobalEventControls = (props: Props) => {
+  // const handleTabClosing = () => {};
+
+  // const alertUser = (event: any) => {
+  //   event.preventDefault();
+  //   event.returnValue = "a";
+  // };
+
   return <></>;
 };
 

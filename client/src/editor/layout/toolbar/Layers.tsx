@@ -164,7 +164,7 @@ const LayerItem = ({
                   raiseError({
                     title: `${
                       findBlockDataByType(drag.blockType)?.label
-                    }는 컨테이너에 바로 추가할 수 없습니다`,
+                    }는 ${findBlockDataByType(drag.blockType)?.label}에 바로 추가할 수 없습니다`,
                     content: "",
                   });
                 }

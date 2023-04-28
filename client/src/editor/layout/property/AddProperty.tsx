@@ -4,7 +4,7 @@ import { useEditorState } from "editor/state/useEditorState";
 type Props = {};
 
 const AddProperty = (props: Props) => {
-  const { currentBlock, addBlockAfter } = useEditorState();
+  const { currentBlock } = useEditorState();
   return currentBlock ? (
     <div className={style.add_property_container}>
       {/* <label className="name">data</label> */}
@@ -13,7 +13,6 @@ const AddProperty = (props: Props) => {
       <div
         className={style.add_btn}
         onClick={() => {
-          addBlockAfter(currentBlock.id, "block-text");
         }}
       >
         추가

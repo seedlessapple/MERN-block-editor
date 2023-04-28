@@ -63,57 +63,63 @@ const Items = () => {
           }}
         />
       </div>
-      {editorBlocksCategory.map((category) => {
-        return (
-          <Category label={category} key={category} isSearching={!!searchParam}>
-            {filteredData()
-              .filter((o) => o.category === category)
-              .map((item) => {
-                return (
-                  <div
-                    key={item.label}
-                    className={style.item}
-                    onMouseDown={(e) => {
-                      setDrag({
-                        isDragging: true,
-                        blockType: item.type,
-                        dragElement: (
-                          <div
-                            style={{
-                              fontWeight: "400",
-                              color: "#353535",
-                              fontSize: "12px",
-                              height: "28px",
-                              display: "flex",
-                              gap: "6px",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Icon
-                              type={item.icon}
-                              width={"12px"}
-                              height={"12px"}
-                            />
-                            <span>{item.label}</span>
-                          </div>
-                        ),
-                      });
-                    }}
-                    onMouseUp={() =>
-                      setDrag({
-                        isDragging: false,
-                      })
-                    }
-                  >
-                    {/* <Icon type={item.icon} /> */}
-                    <Icon type={item.icon} width={"12px"} height={"12px"} />
-                    <span>{item.label}</span>
-                  </div>
-                );
-              })}
-          </Category>
-        );
-      })}
+      <div className={style.category_container}>
+        {editorBlocksCategory.map((category) => {
+          return (
+            <Category
+              label={category}
+              key={category}
+              isSearching={!!searchParam}
+            >
+              {filteredData()
+                .filter((o) => o.category === category)
+                .map((item) => {
+                  return (
+                    <div
+                      key={item.label}
+                      className={style.item}
+                      onMouseDown={(e) => {
+                        setDrag({
+                          isDragging: true,
+                          blockType: item.type,
+                          dragElement: (
+                            <div
+                              style={{
+                                fontWeight: "400",
+                                color: "#353535",
+                                fontSize: "12px",
+                                height: "28px",
+                                display: "flex",
+                                gap: "6px",
+                                alignItems: "center",
+                              }}
+                            >
+                              <Icon
+                                type={item.icon}
+                                width={"12px"}
+                                height={"12px"}
+                              />
+                              <span>{item.label}</span>
+                            </div>
+                          ),
+                        });
+                      }}
+                      onMouseUp={() =>
+                        setDrag({
+                          isDragging: false,
+                        })
+                      }
+                    >
+                      {/* <Icon type={item.icon} /> */}
+                      <Icon type={item.icon} width={"12px"} height={"12px"} />
+                      <span>{item.label}</span>
+                    </div>
+                  );
+                })}
+            </Category>
+          );
+        })}
+      </div>
     </div>
   );
 };

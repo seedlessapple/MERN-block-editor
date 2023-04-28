@@ -14,6 +14,9 @@ const Toolbar = () => {
         <Menu name="컴포넌트">
           <Items />
         </Menu>
+        <Menu name="데이터">
+          <div></div>
+        </Menu>
       </div>
     </div>
   );

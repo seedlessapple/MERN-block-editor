@@ -13,8 +13,6 @@ const StyleMenu = (props: Props) => {
         console.log(range.getBoundingClientRect());
       }
     }
-    console.log("a");
-
     document.addEventListener("selectionchange", handleSelectionChange);
     return () => {
       document.removeEventListener("selectionchange", handleSelectionChange);
